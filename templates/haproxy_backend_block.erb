@@ -1,0 +1,11 @@
+
+backend <%= name %>
+<% options.sort.each do |key, val| -%>
+<% if val.is_a?(Array) -%>
+<% val.each do |item| -%>
+   <%= key %>  <%= item %>
+<% end -%>
+<% else -%>
+   <%= key %>  <%= val %>
+<% end -%>
+<% end -%>

@@ -1,0 +1,21 @@
+
+frontend <%= name %>
+<% if frontend_ipaddress.is_a?(Array) -%>
+<% frontend_ipaddress.each do |ipaddr| -%>
+   bind <%= ipaddr %>:<%= port %>
+<% end -%>
+<% else -%>
+   bind <%= frontend_ipaddress %>:<%= port %>
+<% end -%>
+<% options.sort.each do |key, val| -%>
+<% if val.is_a?(Array) -%>
+<% val.each do |item| -%>
+   <%= key %>  <%= item %>
+<% end -%>
+<% else -%>
+   <%= key %>  <%= val %>
+<% end -%>
+<% end -%>
+<% backends.sort.each do |key, val| -%>
+   use_backend  <%= key %>  <%= val %>
+<% end -%>
