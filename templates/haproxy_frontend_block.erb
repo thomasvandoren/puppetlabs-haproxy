@@ -16,6 +16,6 @@ frontend <%= name %>
    <%= key %>  <%= val %>
 <% end -%>
 <% end -%>
-<% backends.sort.each do |key, val| -%>
+<% backends.each do |key, val| -%>
    use_backend  <%= key %>  <%= val %>
 <% end -%>
