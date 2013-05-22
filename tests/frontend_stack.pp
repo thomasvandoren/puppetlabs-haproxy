@@ -11,7 +11,7 @@ class { 'haproxy':
     'daemon'        => '',
     'stats'         => 'socket /var/lib/haproxy/stats level admin',
     'spread-checks' => '2',
-  }
+  },
   defaults_options => {
     'log'       => 'global',
     'mode'      => 'http',
@@ -20,8 +20,8 @@ class { 'haproxy':
     'maxconn'   => '4000',
     'timeout'   => [ 'connect 2000', 'queue 2000', 'client 2000', 'server 2000' ],
     'balance'   => 'leastconn',
-    'errorfile' => [ '503 /etc/haproxy/503.http' ],
-  }
+    'errorfile' => [ '503 /etc/haproxy/errors/503.http' ],
+  },
 }
 
 # Setup a stats access point. This should not be externally accessible.
@@ -29,7 +29,7 @@ haproxy::listen { 'stats':
   ipaddress => '0.0.0.0',
   ports     => '7580',
   options   => {
-    'stats' => 'uri /',
+    'stats' => [ 'auth admin:admin', 'admin if TRUE', 'uri /' ],
   },
 }
 
@@ -38,18 +38,22 @@ haproxy::listen { 'stats':
 haproxy::backend { 'webservice-backend':
   options => {
     'description' => 'Backend for REST APIs',
-    'option'      => 'httpchk HEAD /healthcheck/ HTTP/1.1\r\n\Host:\ haproxy',
+    'option'      => [ 'httpchk HEAD /healthcheck/ HTTP/1.1\r\nHost:\ haproxy',
+                       "forwardfor", ],
   },
 }
 haproxy::backend { 'webapp-backend':
   options => {
     'description' => 'Backend for user facing web application',
-    'options'     => 'httpchk HEAD /healthcheck/ HTTP/1.1\r\nHost:\ haproxy',
+    'option'      => [ 'httpchk HEAD /healthcheck/ HTTP/1.1\r\nHost:\ haproxy',
+                       "forwardfor", ],
   },
 }
 
-# Export the server objects, which could be spread out accross many nodes.
-@@haproxy::server { 'webservice1':
+# For the sake of the example, these will not be exported. In real life, these
+# definitions would be exported with @@. That would make them available to the
+# above backends, even if the server was on a different node not in this scope.
+haproxy::server { 'webservice1':
   backend_name     => 'webservice-backend',
   server_ipaddress => $::ipaddress_lo,
   port             => '8001',
@@ -57,7 +61,7 @@ haproxy::backend { 'webapp-backend':
     'check' => 'inter 5s rise 2 fall 2',
   },
 }
-@@haproxy::server { 'webservice2':
+haproxy::server { 'webservice2':
   backend_name     => 'webservice-backend',
   server_ipaddress => $::ipaddress_lo,
   port             => '8002',
@@ -66,7 +70,7 @@ haproxy::backend { 'webapp-backend':
   },
 }
 
-@@haproxy::server { 'webapp1':
+haproxy::server { 'webapp1':
   backend_name     => 'webapp-backend',
   server_ipaddress => $::ipaddress_lo,
   port             => '8101',
@@ -74,7 +78,7 @@ haproxy::backend { 'webapp-backend':
     'check' => 'inter 5s rise 2 fall 2',
   },
 }
-@@haproxy::server { 'webapp2':
+haproxy::server { 'webapp2':
   backend_name     => 'webapp-backend',
   server_ipaddress => $::ipaddress_lo,
   port             => '8102',
@@ -87,10 +91,10 @@ haproxy::backend { 'webapp-backend':
 # prefixed with /rest/. The frontend will override the Server parameter and set
 # it to MyApp.
 haproxy::frontend { 'example_stack':
-  frontend_ipaddress => [ $::ipaddress, $::ipaddress_lo ],
+  frontend_ipaddress => [ $::ipaddress_eth1, $::ipaddress_eth2, $::ipaddress_lo ],
   port               => '80',
   options            => {
-    'description' => 'HTTP frontend for example application'
+    'description' => 'HTTP frontend for example application',
     'rspidel'     => '^Server:.*',
     'rspadd'      => 'Server:\ MyApp',
   },
