@@ -47,6 +47,11 @@ define haproxy::frontend (
   $options            = {
     'description' => 'frontend description goes here',
   },
+
+  # FIXME: This works for ruby 1.9+, because hashes preserve insertion
+  #        order. However, for ruby 1.8 the insertion order is not
+  #        preserved. $backends should be implemented as an array of tuples so
+  #        1.8+ is supported. (thomasvandoren, 2013-05-21)
   $backends           = {
   },
 ) {
