@@ -1,7 +1,7 @@
 # Example of frontend with multiple backends, each with multiple servers.
 class { 'haproxy':
-  enable => true,
-  global_options => {
+  enable           => true,
+  global_options   => {
     'log'           => [ "${::ipaddress_lo} local0", "${::ipaddress_lo} local1 notice" ],
     'chroot'        => '/var/lib/haproxy',
     'pidfile'       => '/var/run/haproxy.pid',
@@ -38,15 +38,13 @@ haproxy::listen { 'stats':
 haproxy::backend { 'webservice-backend':
   options => {
     'description' => 'Backend for REST APIs',
-    'option'      => [ 'httpchk HEAD /healthcheck/ HTTP/1.1\r\nHost:\ haproxy',
-                       "forwardfor", ],
+    'option'      => [ 'httpchk HEAD /healthcheck/ HTTP/1.1\r\nHost:\ haproxy', 'forwardfor', ],
   },
 }
 haproxy::backend { 'webapp-backend':
   options => {
     'description' => 'Backend for user facing web application',
-    'option'      => [ 'httpchk HEAD /healthcheck/ HTTP/1.1\r\nHost:\ haproxy',
-                       "forwardfor", ],
+    'option'      => [ 'httpchk HEAD /healthcheck/ HTTP/1.1\r\nHost:\ haproxy', 'forwardfor', ],
   },
 }
 
@@ -98,7 +96,5 @@ haproxy::frontend { 'example_stack':
     'rspidel'     => '^Server:.*',
     'rspadd'      => 'Server:\ MyApp',
   },
-  backends => [['webservice-backend', 'if { path_beg /rest }'],
-               ['webapp-backend',     'if { path_beg / }'],
-               ],
+  backends           => [ ['webservice-backend', 'if { path_beg /rest }'], ['webapp-backend', 'if { path_beg / }'] ],
 }
