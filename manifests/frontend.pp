@@ -1,6 +1,7 @@
 # == Define: haproxy::frontend
 #
-# FIXME
+# Setup a frontend configuration block. Each frontend needs one or more backend
+# members. The backends should be declared on the same node as the frontend.
 #
 # === Requirements
 #

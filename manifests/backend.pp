@@ -1,6 +1,10 @@
 # == Define: haproxy::backend
 #
-# FIXME
+# Setup a backend configuration block. Each backend needs one or more server
+# members. The haproxy::server resources can be defined and exported on other
+# nodes and then collected with haproxy::backend. The haproxy::backend and
+# haproxy::frontend resources need to be declared on the same node to end up in
+# the correct haproxy configuration.
 #
 # === Requirements
 #

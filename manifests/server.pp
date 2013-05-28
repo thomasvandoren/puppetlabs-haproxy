@@ -1,6 +1,7 @@
 # == Define: haproxy::server
 #
-# FIXME
+# Setup a server configuration line underneath a backend. Using storeconfigs,
+# this can be exported to another node where the backend is actually defined.
 #
 # === Requirements
 #
