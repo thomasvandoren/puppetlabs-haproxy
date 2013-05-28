@@ -98,8 +98,7 @@ haproxy::frontend { 'example_stack':
     'rspidel'     => '^Server:.*',
     'rspadd'      => 'Server:\ MyApp',
   },
-  backends => {
-    'webservice-backend' => 'if { path_beg /rest }',
-    'webapp-backend'     => 'if { path_beg / }',
-  },
+  backends => [['webservice-backend', 'if { path_beg /rest }'],
+               ['webapp-backend',     'if { path_beg / }'],
+               ],
 }

@@ -23,7 +23,10 @@
 #   Hash of other options to add to the frontend.
 #
 # [*backends*]
-#   Hash of backend names to path qualifiers.
+#   Array of two element arrays. Each two element array has the backend name in
+#   the first element and the path qualifier in the second element. An ordered
+#   hash would be easier to work with here, but ruby 1.8 does not preserve
+#   insertion order :-(
 #
 # === Examples
 #
@@ -35,10 +38,10 @@
 #       'rspidel'     => '^Server:.*',
 #       'rspadd'      => 'Server:\ MyApp',
 #     },
-#     backends           => {
-#       'payment-backend' => 'if { path_beg /payment }',
-#       'webservice-backend' => 'if { path_beg /rest }',
-#     },
+#     backends           => [
+#       ['payment-backend',    'if { path_beg /payment }'],
+#       ['webservice-backend', 'if { path_beg /rest }']
+#     ],
 #   }
 #
 define haproxy::frontend (
@@ -48,12 +51,7 @@ define haproxy::frontend (
     'description' => 'frontend description goes here',
   },
 
-  # FIXME: This works for ruby 1.9+, because hashes preserve insertion
-  #        order. However, for ruby 1.8 the insertion order is not
-  #        preserved. $backends should be implemented as an array of tuples so
-  #        1.8+ is supported. (thomasvandoren, 2013-05-21)
-  $backends           = {
-  },
+  $backends           = [],
 ) {
   concat::fragment { "${name}_frontend":
     order   => "40-${name}",

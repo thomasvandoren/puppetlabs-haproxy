@@ -90,7 +90,7 @@ describe 'haproxy::frontend' do
     let(:params) do
       {
         :name => 'mu-frontend',
-        :backends => { 'webservices' => 'if { path_beg / }' }
+        :backends => [ ['webservices', 'if { path_beg / }'] ]
       }
     end
 
@@ -105,10 +105,10 @@ describe 'haproxy::frontend' do
     let(:params) do
       {
         :name => 'pi-frontend',
-        :backends => {
-          'webservices' => 'if { path_beg /rest }',
-          'payments' => 'if { path_beg /payments }'
-        }
+        :backends => [
+          ['webservices', 'if { path_beg /rest }'],
+          ['payments', 'if { path_beg /payments }']
+        ]
       }
     end
 
@@ -131,11 +131,11 @@ describe 'haproxy::frontend' do
           'rspidel' => "Server:.*",
           'rspadd' => "Server:\\ MyApp",
         },
-        :backends => {
-          'app' => 'if { path_beg /app }',
-          'api' => 'if { path_beg /rest }',
-          'web' => 'if { path_beg / }'
-        }
+        :backends => [
+          ['app', 'if { path_beg /app }'],
+          ['api', 'if { path_beg /rest }'],
+          ['web', 'if { path_beg / }']
+        ]
       }
     end
 
