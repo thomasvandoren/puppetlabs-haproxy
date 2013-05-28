@@ -39,6 +39,6 @@ define haproxy::backend (
     content => template('haproxy/haproxy_backend_block.erb'),
   }
   if $collect_exported {
-    Haproxy::Server <<| backend == $name |>>
+    Haproxy::Server <<| backend_name == $name |>>
   }
 }
