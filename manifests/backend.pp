@@ -38,7 +38,7 @@ define haproxy::backend (
   },
 ) {
   concat::fragment { "${name}_backend_block":
-    order   => "30-${name}_",
+    order   => "30-${name}-00",
     target  => '/etc/haproxy/haproxy.cfg',
     content => template('haproxy/haproxy_backend_block.erb'),
   }
